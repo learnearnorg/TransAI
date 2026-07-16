@@ -1,0 +1,299 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - name: string (required)
+    //   - email: string (required)
+    //   - role: string (optional)
+    //   - avatar: string (optional)
+    //   - color: string (optional)
+    //
+    // Collection: users/{userId}/glossary
+    // Document ID: {itemId}
+    // Fields:
+    //   - term: string (required, < 200 chars)
+    //   - definition: string (required, < 1000 chars)
+    //
+    // Collection: users/{userId}/dictionary
+    // Document ID: {itemId}
+    // Fields:
+    //   - sourceLang: string (required)
+    //   - targetLang: string (required)
+    //   - sourceTerm: string (required)
+    //   - targetTerm: string (required)
+    //   - notes: string (optional)
+    //
+    // Collection: users/{userId}/phrasebook
+    // Document ID: {itemId}
+    // Fields:
+    //   - source: string (required)
+    //   - target: string (required)
+    //   - sourceLang: string (required)
+    //   - targetLang: string (required)
+    //   - timestamp: number (required)
+    //
+    // Collection: users/{userId}/memory
+    // Document ID: {itemId}
+    // Fields:
+    //   - sourceLang: string (required)
+    //   - targetLang: string (required)
+    //   - sourceSegment: string (required)
+    //   - targetSegment: string (required)
+    //   - usageCount: number (required)
+    //   - lastUsed: number (required)
+    //
+    // Collection: users/{userId}/knowledgeBases
+    // Document ID: {itemId}
+    // Fields:
+    //   - name: string (required, < 100 chars)
+    //   - description: string (optional, < 500 chars)
+    //   - fileIds: list (required, < 100 items)
+    //   - createdAt: number (required)
+    //   - updatedAt: number (required)
+    //   - isActive: bool (required)
+    //
+    // Collection: rooms
+    // Document ID: {roomId}
+    // Fields:
+    //   - id: string (required)
+    //   - sourceText: string (required)
+    //   - targetText: string (required)
+    //   - targetLang: string (required)
+    //   - field: string (required)
+    //   - collaborators: map (required)
+    //   - activities: list (required)
+    //   - updatedAt: number (required)
+    //   - ownerId: string (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Admin' ||
+          (request.auth.token.email == "pboldgerel@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function roleUnchanged() {
+      return !('role' in request.resource.data) || request.resource.data.role == resource.data.role;
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['name', 'email', 'role', 'avatar', 'color']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.email is string && isValidEmail(data.email) &&
+             (!('role' in data) || data.role in ['Admin', 'Editor', 'Viewer']);
+    }
+
+    function isValidGlossary(data) {
+      return hasOnlyAllowedFields(['term', 'definition']) &&
+             data.term is string && data.term.size() > 0 && data.term.size() < 200 &&
+             data.definition is string && data.definition.size() < 1000;
+    }
+
+    function isValidDictionary(data) {
+      return hasOnlyAllowedFields(['sourceLang', 'targetLang', 'sourceTerm', 'targetTerm', 'notes']) &&
+             data.sourceLang is string && data.targetLang is string &&
+             data.sourceTerm is string && data.targetTerm is string &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() < 1000));
+    }
+
+    function isValidPhrasebook(data) {
+      return hasOnlyAllowedFields(['source', 'target', 'sourceLang', 'targetLang', 'timestamp']) &&
+             data.source is string && data.target is string &&
+             data.sourceLang is string && data.targetLang is string &&
+             data.timestamp is number;
+    }
+
+    function isValidMemory(data) {
+      return hasOnlyAllowedFields(['sourceLang', 'targetLang', 'sourceSegment', 'targetSegment', 'usageCount', 'lastUsed']) &&
+             data.sourceLang is string && data.targetLang is string &&
+             data.sourceSegment is string && data.targetSegment is string &&
+             data.usageCount is number && data.lastUsed is number;
+    }
+
+    function isValidKnowledgeBase(data) {
+      return hasOnlyAllowedFields(['name', 'description', 'fileIds', 'createdAt', 'updatedAt', 'isActive']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             (!('description' in data) || (data.description is string && data.description.size() < 500)) &&
+             data.fileIds is list && data.fileIds.size() < 100 &&
+             data.createdAt is number && data.updatedAt is number &&
+             data.isActive is bool;
+    }
+
+    function isValidHistory(data) {
+      return hasOnlyAllowedFields(['id', 'sourceText', 'translatedText', 'sourceLang', 'targetLang', 'timestamp', 'field', 'type', 'persona', 'qualityReport', 'powerhouseAudit', 'isFavorite', 'refinementExplanation', 'contextUsed', 'peMetrics', 'originalMT', 'priority']) &&
+             data.id is string &&
+             data.sourceText is string && data.sourceText.size() < 100000 &&
+             data.translatedText is string && data.translatedText.size() < 100000 &&
+             data.sourceLang is string && data.targetLang is string &&
+             data.timestamp is number &&
+             data.field is string &&
+             data.type is string &&
+             (!('persona' in data) || (data.persona is string || data.persona is map)) &&
+             (!('qualityReport' in data) || data.qualityReport is map) &&
+             (!('powerhouseAudit' in data) || data.powerhouseAudit is map) &&
+             (!('isFavorite' in data) || data.isFavorite is bool) &&
+             (!('refinementExplanation' in data) || data.refinementExplanation is string) &&
+             (!('contextUsed' in data) || data.contextUsed is list) &&
+             (!('peMetrics' in data) || data.peMetrics is map) &&
+             (!('originalMT' in data) || data.originalMT is string) &&
+             (!('priority' in data) || data.priority is string);
+    }
+
+    function isValidPersona(data) {
+      return hasOnlyAllowedFields(['id', 'name', 'description', 'baseInstruction', 'examples', 'isCustom']) &&
+             data.id is string &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.description is string && data.description.size() < 500 &&
+             data.baseInstruction is string && data.baseInstruction.size() < 2000 &&
+             data.examples is list &&
+             (!('isCustom' in data) || data.isCustom is bool);
+    }
+
+    function isValidStyleGuide(data) {
+      return hasOnlyAllowedFields(['id', 'name', 'tone', 'instructions', 'examples', 'lastUpdated']) &&
+             data.id is string &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             (!('tone' in data) || (data.tone is string && data.tone.size() < 100)) &&
+             data.instructions is string && data.instructions.size() < 2000 &&
+             data.examples is list &&
+             data.lastUpdated is number;
+    }
+
+    function isValidRoom(data) {
+      return hasOnlyAllowedFields(['id', 'sourceText', 'targetText', 'targetLang', 'field', 'collaborators', 'activities', 'updatedAt', 'ownerId']) &&
+             data.id is string &&
+             data.sourceText is string && data.sourceText.size() < 100000 &&
+             data.targetText is string && data.targetText.size() < 100000 &&
+             data.targetLang is string &&
+             data.field is string &&
+             data.collaborators is map &&
+             data.activities is list &&
+             data.updatedAt is number &&
+             data.ownerId is string;
+    }
+
+    function isValidWorkflow(data) {
+      return hasOnlyAllowedFields(['id', 'name', 'description', 'field', 'targetLang', 'stages', 'currentStageIndex', 'createdAt', 'updatedAt', 'isCollaborative', 'roomId', 'ownerId']) &&
+             data.id is string &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             (!('description' in data) || (data.description is string && data.description.size() < 500)) &&
+             data.field is string &&
+             data.targetLang is string &&
+             data.stages is list &&
+             data.currentStageIndex is number &&
+             data.createdAt is number &&
+             data.updatedAt is number &&
+             (!('isCollaborative' in data) || data.isCollaborative is bool) &&
+             (!('roomId' in data) || data.roomId is string) &&
+             data.ownerId is string;
+    }
+
+    // ===============================================================
+    // Match Rules
+    // ===============================================================
+    match /workflows/{workflowId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidWorkflow(request.resource.data) && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isAuthenticated() && isValidWorkflow(request.resource.data) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isAuthenticated() && resource.data.ownerId == request.auth.uid;
+    }
+
+    match /rooms/{roomId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidRoom(request.resource.data) && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isAuthenticated() && isValidRoom(request.resource.data) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isAuthenticated() && resource.data.ownerId == request.auth.uid;
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && (!('role' in request.resource.data) || request.resource.data.role == 'Viewer' || isAdmin());
+      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && roleUnchanged()) || (isAdmin() && isValidUser(request.resource.data));
+      
+      match /glossary/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidGlossary(request.resource.data);
+        allow update: if isOwner(userId) && isValidGlossary(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /dictionary/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidDictionary(request.resource.data);
+        allow update: if isOwner(userId) && isValidDictionary(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /phrasebook/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidPhrasebook(request.resource.data);
+        allow update: if isOwner(userId) && isValidPhrasebook(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /memory/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidMemory(request.resource.data);
+        allow update: if isOwner(userId) && isValidMemory(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /knowledgeBases/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidKnowledgeBase(request.resource.data);
+        allow update: if isOwner(userId) && isValidKnowledgeBase(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /history/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidHistory(request.resource.data);
+        allow update: if isOwner(userId) && isValidHistory(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /personas/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidPersona(request.resource.data);
+        allow update: if isOwner(userId) && isValidPersona(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /styleGuides/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidStyleGuide(request.resource.data);
+        allow update: if isOwner(userId) && isValidStyleGuide(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

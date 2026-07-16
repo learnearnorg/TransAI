@@ -1,0 +1,8 @@
+{
+  "name": "TransAI",
+  "description": "A world-class, multi-modal translation service featuring real-time voice, text, and visual translation powered by the latest Gemini models.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

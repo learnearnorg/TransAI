@@ -1,0 +1,208 @@
+{
+  "entities": {
+    "GlossaryItem": {
+      "title": "Glossary Item",
+      "description": "A term and its definition for a specific project.",
+      "type": "object",
+      "properties": {
+        "term": { "type": "string" },
+        "definition": { "type": "string" }
+      },
+      "required": ["term", "definition"]
+    },
+    "DictionaryEntry": {
+      "title": "Dictionary Entry",
+      "description": "A translation pair for a specific language pair.",
+      "type": "object",
+      "properties": {
+        "sourceLang": { "type": "string" },
+        "targetLang": { "type": "string" },
+        "sourceTerm": { "type": "string" },
+        "targetTerm": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["sourceLang", "targetLang", "sourceTerm", "targetTerm"]
+    },
+    "PhrasebookItem": {
+      "title": "Phrasebook Item",
+      "description": "A saved phrase for common use.",
+      "type": "object",
+      "properties": {
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "sourceLang": { "type": "string" },
+        "targetLang": { "type": "string" },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["source", "target", "sourceLang", "targetLang", "timestamp"]
+    },
+    "TranslationMemoryEntry": {
+      "title": "Translation Memory Entry",
+      "description": "A segment of translated text for reuse.",
+      "type": "object",
+      "properties": {
+        "sourceLang": { "type": "string" },
+        "targetLang": { "type": "string" },
+        "sourceSegment": { "type": "string" },
+        "targetSegment": { "type": "string" },
+        "usageCount": { "type": "number" },
+        "lastUsed": { "type": "number" }
+      },
+      "required": ["sourceLang", "targetLang", "sourceSegment", "targetSegment", "usageCount", "lastUsed"]
+    },
+    "TranslationHistoryItem": {
+      "title": "Translation History Item",
+      "description": "A record of a translation performed by the user.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sourceText": { "type": "string" },
+        "translatedText": { "type": "string" },
+        "sourceLang": { "type": "string" },
+        "targetLang": { "type": "string" },
+        "timestamp": { "type": "number" },
+        "field": { "type": "string" },
+        "isFavorite": { "type": "boolean" }
+      },
+      "required": ["id", "sourceText", "translatedText", "sourceLang", "targetLang", "timestamp", "field"]
+    },
+    "PersonaDefinition": {
+      "title": "Persona Definition",
+      "description": "A custom linguistic persona.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "baseInstruction": { "type": "string" },
+        "examples": { "type": "array" },
+        "isCustom": { "type": "boolean" }
+      },
+      "required": ["id", "name", "description", "baseInstruction", "examples"]
+    },
+    "StyleGuide": {
+      "title": "Style Guide",
+      "description": "A custom style guide for translations.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "tone": { "type": "string" },
+        "instructions": { "type": "string" },
+        "examples": { "type": "array" },
+        "lastUpdated": { "type": "number" }
+      },
+      "required": ["id", "name", "instructions", "examples", "lastUpdated"]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User settings and preferences.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "avatar": { "type": "string" },
+        "color": { "type": "string" }
+      },
+      "required": ["name", "email"]
+    },
+    "KnowledgeBase": {
+      "title": "Knowledge Base",
+      "description": "A collection of files for context injection.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "fileIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["name", "fileIds", "createdAt", "updatedAt", "isActive"]
+    },
+    "CollaborationRoom": {
+      "title": "Collaboration Room",
+      "description": "A real-time collaborative translation session.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sourceText": { "type": "string" },
+        "targetText": { "type": "string" },
+        "targetLang": { "type": "string" },
+        "field": { "type": "string" },
+        "collaborators": { "type": "object" },
+        "activities": { "type": "array" },
+        "updatedAt": { "type": "number" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["id", "sourceText", "targetText", "targetLang", "field", "collaborators", "activities", "updatedAt", "ownerId"]
+    },
+    "Workflow": {
+      "title": "Workflow",
+      "description": "A multi-stage translation project workflow.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "field": { "type": "string" },
+        "targetLang": { "type": "string" },
+        "stages": { "type": "array" },
+        "currentStageIndex": { "type": "number" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" },
+        "isCollaborative": { "type": "boolean" },
+        "roomId": { "type": "string" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["id", "name", "field", "targetLang", "stages", "currentStageIndex", "createdAt", "updatedAt", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/workflows/{workflowId}": {
+      "schema": "Workflow",
+      "description": "Active project workflows."
+    },
+    "/rooms/{roomId}": {
+      "schema": "CollaborationRoom",
+      "description": "Active collaboration rooms."
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile data."
+    },
+    "/users/{userId}/glossary/{itemId}": {
+      "schema": "GlossaryItem",
+      "description": "User's glossary items."
+    },
+    "/users/{userId}/dictionary/{itemId}": {
+      "schema": "DictionaryEntry",
+      "description": "User's dictionary entries."
+    },
+    "/users/{userId}/phrasebook/{itemId}": {
+      "schema": "PhrasebookItem",
+      "description": "User's phrasebook items."
+    },
+    "/users/{userId}/memory/{itemId}": {
+      "schema": "TranslationMemoryEntry",
+      "description": "User's translation memory."
+    },
+    "/users/{userId}/history/{itemId}": {
+      "schema": "TranslationHistoryItem",
+      "description": "User's translation history."
+    },
+    "/users/{userId}/personas/{itemId}": {
+      "schema": "PersonaDefinition",
+      "description": "User's custom personas."
+    },
+    "/users/{userId}/styleGuides/{itemId}": {
+      "schema": "StyleGuide",
+      "description": "User's style guides."
+    },
+    "/users/{userId}/knowledgeBases/{itemId}": {
+      "schema": "KnowledgeBase",
+      "description": "User's knowledge bases."
+    }
+  }
+}

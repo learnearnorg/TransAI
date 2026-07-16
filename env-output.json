@@ -1,0 +1,9 @@
+{
+  "GEMINI_API_KEY": "MY_G... (length: 17)",
+  "API_KEY": "MISSING",
+  "GOOGLE_API_KEY": "MISSING",
+  "VITE_GEMINI_API_KEY": "MISSING",
+  "GITHUB_TOKEN": "gh... (len: 40)",
+  "NEXT_PUBLIC_GEMINI_API_KEY": "MY... (len: 17)",
+  "AUTHORIZED_SERVICE_ACCOUNT_EMAIL": "ai... (len: 66)"
+}

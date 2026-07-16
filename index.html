@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navbar-height: 4.1875rem;
+            --grid-color: rgba(99, 102, 241, 0.14);
+        }
+        body {
+            font-family: 'Merriweather', serif;
+            background-color: #f8fafc;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        #root {
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+        .bg-grid-wrapper {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(circle at center, transparent 20%, #f8fafc 100%),
+                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+            background-size: 100% 100%, 32px 32px, 32px 32px;
+        }
+        .font-sans {
+            font-family: 'Merriweather', serif !important;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Custom Scrollbar Styling - High Visibility */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+            display: block !important;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #b428f3;
+            border-radius: 10px;
+            border: 3px solid #f1f5f9;
+            background-clip: padding-box;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #9d22d3;
+        }
+        .custom-scrollbar {
+            scrollbar-width: auto;
+            scrollbar-color: #b428f3 #f1f5f9;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Markdown Table Styles */
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 14px;
+        }
+        .markdown-body th {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 800;
+        }
+        .markdown-body td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+        }
+        .markdown-body tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .bg-grid-subtle-white {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+
+        .bg-grid-subtle-slate {
+            background-image: linear-gradient(to right, rgba(71, 85, 105, 0.08) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(71, 85, 105, 0.08) 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+
+        /* Spreadsheet Rendering Styles */
+        .neural-sheet {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 12px;
+            background: white;
+            border: 1px solid #e2e8f0;
+        }
+        .neural-sheet th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        .neural-sheet td {
+            padding: 8px 14px;
+            border: 1px solid #f1f5f9;
+            color: #1e293b;
+        }
+        .neural-sheet tr:nth-child(even) {
+            background: #fcfdfe;
+        }
+        .neural-sheet tr:hover {
+            background: #f1f5f9;
+        }
+
+        [data-tooltip] {
+            position: relative;
+        }
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: #1e293b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Bottom Positioning Variant */
+        [data-tooltip-dir="bottom"]::after {
+            bottom: auto;
+            top: 125%;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        [data-tooltip-dir="bottom"]:hover::after {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

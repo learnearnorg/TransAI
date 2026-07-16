@@ -1,0 +1,45 @@
+1065:                  <button onClick={() => setSegments(prev => prev.map(x => x.id === s.id ? {...x, isLocked: !x.isLocked} : x))} className={`p-1.5 rounded-lg ${s.isLocked ? 'bg-amber-600 text-white' : 'text-slate-300 hover:text-indigo-600'}`}>
+1189:                            <button 
+1243:                <button onClick={handleTranslate} disabled={isLoading} className="ml-2 px-4 py-1.5 bg-indigo-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-lg active:scale-95 transition-all whitespace-nowrap">Run Synthesis</button>
+1248:            <button onClick={onOpenPhrasebook} className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-[9px] font-black uppercase bg-white text-slate-700 border border-slate-200 shadow-sm transition-all hover:border-indigo-300 hover:text-indigo-600"><Bookmark size={14} /> Phrasebook</button>
+1249:            <button onClick={onOpenGlossary} className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-[9px] font-black uppercase bg-white text-slate-700 border border-slate-200 shadow-sm transition-all hover:border-indigo-300 hover:text-indigo-600"><Book size={14} /> Glossary</button>
+1250:            <button onClick={onOpenDictionary} className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-[9px] font-black uppercase bg-white text-slate-700 border border-slate-200 shadow-sm transition-all hover:border-amber-300 hover:text-amber-600"><Library size={14} /> Dictionary</button>
+1251:            <button onClick={handleCreateRoom} className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase shadow-xl transition-all ${roomId ? 'bg-emerald-600 text-white shadow-emerald-100 hover:bg-emerald-700' : 'bg-indigo-600 text-white shadow-indigo-100 hover:bg-indigo-700'}`}>
+1263:            <button onClick={onOpenMemory} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase bg-indigo-600 text-white shadow-xl shadow-indigo-100 transition-all hover:bg-indigo-700">
+1277:                      <button 
+1285:                      <button 
+1300:                      <button 
+1316:                      <button 
+1331:                      <button 
+1339:                      <button 
+1376:                 <button 
+1403:                          <button 
+1433:                         <button
+1446:                         <button
+1480:                               <button 
+1488:                               <button 
+1528:                              <button 
+1539:                              <button 
+1577:              <button 
+1603:                     <button 
+1611:                     <button onClick={handlePrint} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-md transition-all" title="Print Output"><Printer size={14} /></button>
+1612:                     <button onClick={handleExportText} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-md transition-all" title="Download as TXT"><Download size={14} /></button>
+1613:                     <button onClick={handleShare} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-md transition-all" title="Share Synthesis"><Share2 size={14} /></button>
+1614:                     <button onClick={handleSaveToCloud} disabled={isSavingToCloud} className={`p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-white rounded-md transition-all ${isSavingToCloud ? 'animate-pulse' : ''}`} title="Cloud Sync"><Cloud size={14} /></button>
+1615:                     <button onClick={handleCommitToMemory} disabled={isCommittingToMemory} className={`p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-md transition-all ${isCommittingToMemory ? 'animate-pulse' : ''}`} title="Commit to Translation Memory"><Database size={14} /></button>
+1616:                     <button onClick={handleCopyOutput} className={`p-1.5 rounded-md transition-all ${isCopied ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-indigo-600 hover:bg-white'}`} title="Copy to Buffer">{isCopied ? <Check size={14}/> : <Copy size={14} />}</button>
+1617:                     <button 
+1625:                     <button onClick={handleVerify} disabled={isVerifying} className={`p-1.5 rounded-md transition-all ${showVerifyPanel ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-400 hover:text-emerald-600 hover:bg-white'}`} title="AI Accuracy Audit">
+1628:                     <button onClick={handleAudit} disabled={isAuditing} className={`p-1.5 border-none rounded-md transition-all ${showAudit ? 'bg-amber-600 text-white shadow-lg' : 'text-slate-400 hover:text-amber-600 hover:bg-white'}`} title="Post-Edit Audit">
+1631:                     <button onClick={handleAnalyzeTone} disabled={isAnalyzingTone} className={`p-1.5 border-none rounded-md transition-all ${showToneRadar ? 'bg-pink-600 text-white shadow-lg' : 'text-slate-400 hover:text-pink-600 hover:bg-white'}`} title="Tone & Nuance Radar">
+1646:                      <button 
+1655:                      <button 
+1664:                      <button 
+1673:                      <button 
+1682:                      <button 
+1691:                      <button 
+1700:                      <button 
+1755:                   <button onClick={() => setShowToneRadar(false)} className="absolute top-4 right-4 p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-lg transition-all z-10">
+2009:                  <button 
+2047:                  <button onClick={closeTooltips} className="p-1.5 text-slate-300 hover:text-rose-500 transition-colors"><X size={20} strokeWidth={3} /></button>
+2060:                  <button 
